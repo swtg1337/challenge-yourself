@@ -10,11 +10,11 @@ interface ButtonProps {
     label?: string
     icon?: string
     className?: string
-    onClick: () => void
+    onClick?: () => void
     children?: React.ReactNode
 }
 
-export const BaseButton = ({
+const BaseButton = ({
     size,
     background = 'primary',
     border = 'withoutBorder',
@@ -30,7 +30,7 @@ export const BaseButton = ({
         border,
         className
     )
-    const path = (name: string) => `../../assets/icons/${name}.svg`
+    const path = (name: string) => `src/assets/icons/${name}.svg`
     return (
         <div className={ButtonCN} onClick={onClick}>
             {icon && <SVG src={path(icon)}/>}
@@ -38,3 +38,5 @@ export const BaseButton = ({
         </div>
     )
 }
+
+export default BaseButton
