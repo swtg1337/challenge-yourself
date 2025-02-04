@@ -1,0 +1,27 @@
+.switch-container {
+  width: 48px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  background: gray;
+  border-radius: 12px;
+  padding: 4px;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &.on {
+    background: green;
+  }
+}
+
+.switch-handle {
+  width: 16px;
+  height: 16px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s;
+
+  &.on {
+    transform: translateX(24px);
+  }
+}
