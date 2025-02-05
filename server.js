@@ -63,11 +63,6 @@ app.post("/challenges/:id/complete", async (req, res) => {
             where: { id },
         })
 
-        if (!challenge) {
-            return res.status(404).json({ error: "Челлендж не найден" })
-        }
-
-        // Проверяем, что completedDays не превышает totalDays
         if (challenge.completedDays >= challenge.totalDays) {
             return res.status(400).json({ error: "Челлендж уже завершен" })
         }
@@ -88,18 +83,6 @@ app.post("/challenges/:id/uncomplete", async (req, res) => {
     const { id } = req.params
 
     try {
-        const challenge = await prisma.challenge.findUnique({
-            where: { id },
-        })
-
-        if (!challenge) {
-            return res.status(404).json({ error: "Челлендж не найден" })
-        }
-
-        if (challenge.completedDays <= 0) {
-            return res.status(400).json({ error: "Нельзя уменьшить completedDays ниже 0" })
-        }
-
         const updatedChallenge = await prisma.challenge.update({
             where: { id },
             data: { completedDays: { decrement: 1 } },

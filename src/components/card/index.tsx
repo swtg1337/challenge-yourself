@@ -1,5 +1,6 @@
 import React from 'react'
 import './card.style.scss'
+
 // import classNames from 'classnames'
 
 interface CardProps {
@@ -10,7 +11,6 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ title, description, completedDays, totalDays }) => {
-
 
     return (
         <div className="card">
