@@ -1,4 +1,5 @@
 import React from 'react'
+import './modal.style.pcss'
 
 interface ModalProps {
     isOpen: boolean

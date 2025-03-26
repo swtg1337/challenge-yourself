@@ -11,14 +11,17 @@ app.use(express.json())
 app.use(cors())
 
 app.post("/challenges", async (req, res) => {
-    const { title, description, totalDays } = req.body
+    const { title, description, totalDays, createdAt, completedDays } = req.body
 
     try {
         const newChallenge = await prisma.challenge.create({
             data: {
                 title,
-                description: description || null,
+                description: description ?? null,
                 totalDays: totalDays ?? null,
+                completedDays: 0,
+                isCompletedToday: false,
+                lastCompletedDate: null,
             },
         })
 
@@ -63,34 +66,38 @@ app.post("/challenges/:id/complete", async (req, res) => {
             where: { id },
         })
 
-        if (challenge.completedDays >= challenge.totalDays) {
-            return res.status(400).json({ error: "Челлендж уже завершен" })
+        if (!challenge) {
+            return res.status(404).json({ error: 'Челлендж не найден' })
         }
 
+        const newIsCompletedToday = !challenge.isCompletedToday
+
         const updatedChallenge = await prisma.challenge.update({
             where: { id },
-            data: { completedDays: { increment: 1 } },
-        })
-
-        res.json(updatedChallenge);
-    } catch (error) {
-        res.status(500).json({ error: "Ошибка обновления челленджа" })
-    }
-})
-
-
-app.post("/challenges/:id/uncomplete", async (req, res) => {
-    const { id } = req.params
-
-    try {
-        const updatedChallenge = await prisma.challenge.update({
-            where: { id },
-            data: { completedDays: { decrement: 1 } },
+            data: {
+                completedDays: newIsCompletedToday ? { increment: 1 } : { decrement: 1 },
+                isCompletedToday: newIsCompletedToday,
+                lastCompletedDate: newIsCompletedToday ? new Date() : null,
+            },
         })
 
         res.json(updatedChallenge)
     } catch (error) {
-        res.status(500).json({ error: "Ошибка обновления челленджа" })
+        res.status(500).json({ error: 'Ошибка обновления челленджа' })
+    }
+})
+
+app.delete("/challenges/:id", async (req, res) => {
+    const { id } = req.params
+
+    try {
+        await prisma.challenge.delete({
+           where: { id }
+        })
+        res.json({ message: "Челлендж удален" });
+    } catch (error) {
+        console.error("Ошибка при удалении:", error);
+        res.status(500).json({ error: "Ошибка при удалении челленджа" });
     }
 })
 
