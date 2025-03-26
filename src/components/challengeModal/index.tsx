@@ -24,7 +24,7 @@ const ChallengeModal: React.FC<ChallengeModalProps> = ({ isOpen, onClose, onChal
 
     const handleSubmit = async () => {
         if (!title) {
-            setError('Введите название челенджа')
+            setError('Введите название челеннджа')
             return
         }
 
@@ -110,7 +110,7 @@ const ChallengeModal: React.FC<ChallengeModalProps> = ({ isOpen, onClose, onChal
                     onKeyDown={handleKeyDown}
                 />
                 {error && <div className="error">{error}</div>}
-                <button onClick={handleSubmit}>Создать</button>
+                <button className="create-challenge-btn" onClick={handleSubmit}>Создать</button>
             </div>
         </Modal>
     )
