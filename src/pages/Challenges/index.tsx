@@ -14,7 +14,7 @@ const Challenges = () => {
 
     useEffect(() => {
         dispatch(fetchChallenges());
-    }, [dispatch])
+    }, [])
 
     const onChallengeCreated = () => {
         dispatch(fetchChallenges())

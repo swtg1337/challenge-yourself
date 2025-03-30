@@ -33,12 +33,35 @@ app.post("/challenges", async (req, res) => {
 
 app.get("/challenges", async (req, res) => {
     try {
-        const challenges = await prisma.challenge.findMany()
-        res.json(challenges)
+        const challenges = await prisma.challenge.findMany();
+
+        const today = new Date();
+
+        const updatedChallenges = await Promise.all(
+            challenges.map(async (challenge) => {
+                if (challenge.isCompletedToday && challenge.lastCompletedDate) {
+                    const lastCompletedDate = new Date(challenge.lastCompletedDate);
+
+                    if (
+                        today.getFullYear() !== lastCompletedDate.getFullYear() ||
+                        today.getMonth() !== lastCompletedDate.getMonth() ||
+                        today.getDate() !== lastCompletedDate.getDate()
+                    ) {
+                        return prisma.challenge.update({
+                            where: { id: challenge.id },
+                            data: { isCompletedToday: false }
+                        });
+                    }
+                }
+                return challenge;
+            })
+        );
+
+        res.json(updatedChallenges);
     } catch (error) {
-        res.status(500).json({ error: "Ошибка получения данных" })
+        res.status(500).json({ error: "Ошибка получения данных" });
     }
-})
+});
 
 app.get("/challenges/:id", async (req, res) => {
     const { id } = req.params
