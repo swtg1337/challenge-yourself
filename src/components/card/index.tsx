@@ -11,10 +11,11 @@ type CardProps = {
     totalDays?: number
     completedDays: number
     isCompletedToday: boolean
+    isFullyCompleted: boolean
     onDelete: (id: string) => void
 }
 
-const Card: React.FC<CardProps> = ({ id, title, description, completedDays, totalDays, isCompletedToday, onDelete }) => {
+const Card: React.FC<CardProps> = ({ id, title, description, completedDays, totalDays, isCompletedToday, onDelete, isFullyCompleted }) => {
     const dispatch = useDispatch<AppDispatch>()
 
     const handleToggle = () => {
@@ -40,6 +41,7 @@ const Card: React.FC<CardProps> = ({ id, title, description, completedDays, tota
                 />
                 <span className="slider"></span>
             </label>
+            {isFullyCompleted && <span>Челлендж завершен!</span>}
         </div>
     )
 }

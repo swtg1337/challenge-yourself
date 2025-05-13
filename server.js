@@ -11,7 +11,7 @@ app.use(express.json())
 app.use(cors())
 
 app.post("/challenges", async (req, res) => {
-    const { title, description, totalDays, createdAt, completedDays } = req.body
+    const { title, description, totalDays } = req.body
 
     try {
         const newChallenge = await prisma.challenge.create({
@@ -94,12 +94,15 @@ app.post("/challenges/:id/complete", async (req, res) => {
         }
 
         const newIsCompletedToday = !challenge.isCompletedToday
+        const newCompletedDays = newIsCompletedToday ? challenge.completedDays + 1 : challenge.completedDays - 1
+        const isFullyCompleted = newCompletedDays >= challenge.totalDays
 
         const updatedChallenge = await prisma.challenge.update({
             where: { id },
             data: {
-                completedDays: newIsCompletedToday ? { increment: 1 } : { decrement: 1 },
+                completedDays: newCompletedDays,
                 isCompletedToday: newIsCompletedToday,
+                isFullyCompleted: isFullyCompleted,  // Устанавливаем статус выполнения челленджа
                 lastCompletedDate: newIsCompletedToday ? new Date() : null,
             },
         })

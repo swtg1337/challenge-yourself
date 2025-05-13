@@ -20,6 +20,7 @@ model Challenge {
   totalDays         Int?      @default(0) // Всего дней в челлендже
   completedDays     Int       @default(0) // Сколько дней завершено
   isCompletedToday  Boolean   @default(false) // Отметка, был ли выполнен челлендж сегодня
+  isFullyCompleted  Boolean   @default(false) // Челлендж выполнен полностью
   lastCompletedDate DateTime? // Дата последнего выполнения челленджа
   createdAt         DateTime  @default(now()) // Дата создания
 }

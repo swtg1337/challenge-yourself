@@ -8,6 +8,7 @@ type Challenge = {
     totalDays?: number;
     completedDays: number;
     isCompletedToday: boolean;
+    isFullyCompleted: boolean;
 }
 
 type  ChallengesState = {
@@ -49,7 +50,7 @@ export const deleteChallenge = createAsyncThunk(
 )
 
 export const toggleCompletedDay = createAsyncThunk<
-    { id: string; isCompletedToday: boolean },
+    { id: string; isCompletedToday: boolean; isFullyCompleted: boolean },
     string,
     { state: RootState }
 >(
@@ -64,26 +65,25 @@ export const toggleCompletedDay = createAsyncThunk<
         }
 
         const newIsCompletedToday = !challenge.isCompletedToday
-
         const response = await fetch(`http://localhost:3001/challenges/${id}/complete`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                isCompletedToday: newIsCompletedToday,
-            }),
         })
 
         if (response.ok) {
-            return { id, isCompletedToday: newIsCompletedToday }
+            const updatedChallenge = await response.json()
+            return {
+                id,
+                isCompletedToday: newIsCompletedToday,
+                isFullyCompleted: updatedChallenge.isFullyCompleted  // Возвращаем статус завершенности челленджа
+            }
         } else {
             return rejectWithValue('Error updating challenge')
         }
     }
 )
-
-
 
 const challengeSlice = createSlice({
     name: 'challenges',
@@ -120,12 +120,13 @@ const challengeSlice = createSlice({
                 state.error = action.payload as string
             })
             .addCase(toggleCompletedDay.fulfilled, (state, action) => {
-                const { id, isCompletedToday } = action.payload
+                const { id, isCompletedToday, isFullyCompleted } = action.payload
 
                 const challenge = state.items.find(challenge => challenge.id === id);
 
                 if (challenge) {
                     challenge.isCompletedToday = isCompletedToday
+                    challenge.isFullyCompleted = isFullyCompleted  // Обновляем статус выполнения челленджа
 
                     if (isCompletedToday) {
                         challenge.completedDays += 1

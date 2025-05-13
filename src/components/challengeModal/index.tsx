@@ -48,7 +48,8 @@ const ChallengeModal: React.FC<ChallengeModalProps> = ({ isOpen, onClose, onChal
                     description,
                     totalDays: totalDays ? Number(totalDays) : undefined,
                     completedDays: 0,
-                    isCompletedToday: false
+                    isCompletedToday: false,
+                    isFullyCompleted: false
                 }
 
                 dispatch(addChallenge(newChallenge))
