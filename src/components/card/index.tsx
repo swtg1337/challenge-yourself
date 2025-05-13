@@ -19,7 +19,9 @@ const Card: React.FC<CardProps> = ({ id, title, description, completedDays, tota
     const dispatch = useDispatch<AppDispatch>()
 
     const handleToggle = () => {
-        dispatch(toggleCompletedDay(id))
+        if (!isFullyCompleted) {
+            dispatch(toggleCompletedDay(id))
+        }
     }
 
     return (
@@ -32,16 +34,21 @@ const Card: React.FC<CardProps> = ({ id, title, description, completedDays, tota
 
             <button className="card-button" onClick={() => onDelete(id)}>Удалить</button>
 
-            Выполнен сегодня
-            <label className="card-switch">
-                <input
-                    type="checkbox"
-                    checked={isCompletedToday}
-                    onChange={handleToggle}
-                />
-                <span className="slider"></span>
-            </label>
-            {isFullyCompleted && <span>Челлендж завершен!</span>}
+            {!isFullyCompleted && (
+                <>
+                    Выполнен сегодня
+                    <label className="card-switch">
+                        <input
+                            type="checkbox"
+                            checked={isCompletedToday}
+                            onChange={handleToggle}
+                        />
+                        <span className="slider"></span>
+                    </label>
+                </>
+            )}
+
+            {isFullyCompleted && <span>Челлендж завершён! Поздравляю!</span>}
         </div>
     )
 }
